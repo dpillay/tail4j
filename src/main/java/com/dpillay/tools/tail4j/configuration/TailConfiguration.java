@@ -4,13 +4,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class TailConfiguration {
-	private long skipLines = -1;
+	private long showLines = -1;
 	private boolean force = false;
 	private List<String> files = new ArrayList<String>();
 
-	public TailConfiguration(long skipLines, boolean force, List<String> files) {
+	public TailConfiguration(long showLines, boolean force, List<String> files) {
 		super();
-		this.skipLines = skipLines;
+		this.showLines = showLines;
 		this.force = force;
 		this.files = files;
 	}
@@ -19,12 +19,12 @@ public class TailConfiguration {
 		super();
 	}
 
-	public long getSkipLines() {
-		return skipLines;
+	public long getShowLines() {
+		return showLines;
 	}
 
-	public void setSkipLines(long skipLines) {
-		this.skipLines = skipLines;
+	public void setShowLines(long skipLines) {
+		this.showLines = skipLines;
 	}
 
 	public boolean isForce() {
@@ -46,6 +46,6 @@ public class TailConfiguration {
 	@Override
 	public String toString() {
 		return "TailConfiguration [files=" + files + ", force=" + force
-				+ ", skipLines=" + skipLines + "]";
+				+ ", showLines=" + showLines + "]";
 	}
 }

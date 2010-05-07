@@ -34,12 +34,12 @@ public class TailLauncher {
 		for (int i = 0; i < args.length; ++i) {
 			String arg = args[i];
 			if (arg.equals("-n")) {
-				long skipLines = -1;
+				long showLines = -1;
 				try {
-					skipLines = Long.parseLong(args[++i]);
+					showLines = Long.parseLong(args[++i]);
 				} catch (Throwable t) {
 				}
-				tc.setSkipLines(skipLines);
+				tc.setShowLines(showLines);
 			} else if (arg.equals("-f")) {
 				tc.setForce(true);
 			} else {

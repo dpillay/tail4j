@@ -1,8 +1,11 @@
 package com.dpillay.tools.tail4j.characters;
 
+import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileReader;
+import java.io.InputStream;
 
 import com.dpillay.tools.tail4j.configuration.TailConfiguration;
 import com.dpillay.tools.tail4j.core.TailListener;
@@ -17,6 +20,9 @@ import com.dpillay.tools.tail4j.model.TailEvent;
  * @author dpillay
  */
 public class StringTailedFileReader implements TailedFileReader<String> {
+	private static char newLine = System.getProperty("line.separator")
+			.charAt(0);
+
 	private File file = null;
 	private TailListener<String> listener = null;
 	private TailConfiguration configuration = null;
@@ -64,9 +70,15 @@ public class StringTailedFileReader implements TailedFileReader<String> {
 	public String call() throws Exception {
 		try {
 			BufferedReader br = new BufferedReader(new FileReader(file));
-			long skipLines = this.configuration.getSkipLines();
-			br.skip(file.length());
-			while (this.configuration.isForce() || skipLines-- > 0) {
+			long showLineCount = this.configuration.getShowLines();
+			if (showLineCount > 0) {
+				long skipLinesLength = this.getSkipLinesLength(file,
+						showLineCount);
+				br.skip(skipLinesLength);
+			} else {
+				br.skip(file.length());
+			}
+			while (this.configuration.isForce() || showLineCount-- > 0) {
 				String line = br.readLine();
 				if (line == null) {
 					Thread.sleep(200);
@@ -81,5 +93,34 @@ public class StringTailedFileReader implements TailedFileReader<String> {
 					"Could not finish tailing file");
 		}
 		return null;
+	}
+
+	private long getSkipLinesLength(File file, long showLineCount) {
+		InputStream is = null;
+		try {
+			is = new BufferedInputStream(new FileInputStream(file));
+			long[] lineChars = new long[(int) showLineCount + 1];
+			byte[] c = new byte[1024];
+			long count = 0;
+			int index = 0;
+			int readChars = 0;
+			long totalCharsRead = 0;
+			while ((readChars = is.read(c)) != -1) {
+				for (int i = 0; i < readChars; ++i) {
+					if (c[i] == newLine) {
+						++count;
+						if (index == lineChars.length)
+							index = 0;
+						lineChars[index++] = totalCharsRead + i + 1;
+					}
+				}
+				totalCharsRead += readChars;
+			}
+			if (count >= showLineCount) {
+				return lineChars[index];
+			}
+		} catch (Exception e) {
+		}
+		return 0;
 	}
 }
