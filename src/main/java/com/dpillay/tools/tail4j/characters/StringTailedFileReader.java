@@ -78,6 +78,10 @@ public class StringTailedFileReader implements TailedReader<String, File> {
 			} else {
 				br.skip(file.length());
 			}
+			if (!this.configuration.isForce() && showLineCount <= 0) {
+				// showing 10 lines by default
+				showLineCount = 10;
+			}
 			while (this.configuration.isForce() || showLineCount-- > 0) {
 				String line = br.readLine();
 				if (line == null) {

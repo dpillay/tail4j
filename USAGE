@@ -1,0 +1,8 @@
+tail4j - Simple tail for Java
+
+usage:
+java -jar tail4j.jar [-n] <lines> [-f] files...
+where
+	-n 		> Specifies the number of lines to be shown counting from the bottom.
+	-f 		> Specifies whether to keep reading even after encountering end of file.
+	files	> List of files to be tailed.
