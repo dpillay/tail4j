@@ -9,7 +9,7 @@ import java.io.InputStream;
 
 import com.dpillay.tools.tail4j.configuration.TailConfiguration;
 import com.dpillay.tools.tail4j.core.TailListener;
-import com.dpillay.tools.tail4j.core.TailedFileReader;
+import com.dpillay.tools.tail4j.core.TailedReader;
 import com.dpillay.tools.tail4j.exception.ApplicationException;
 import com.dpillay.tools.tail4j.exception.ErrorCode;
 import com.dpillay.tools.tail4j.model.TailEvent;
@@ -19,7 +19,7 @@ import com.dpillay.tools.tail4j.model.TailEvent;
  * 
  * @author dpillay
  */
-public class StringTailedFileReader implements TailedFileReader<String> {
+public class StringTailedFileReader implements TailedReader<String, File> {
 	private static char newLine = System.getProperty("line.separator")
 			.charAt(0);
 
@@ -39,7 +39,7 @@ public class StringTailedFileReader implements TailedFileReader<String> {
 	}
 
 	@Override
-	public File getFile() {
+	public File getSource() {
 		return file;
 	}
 
@@ -49,7 +49,7 @@ public class StringTailedFileReader implements TailedFileReader<String> {
 	}
 
 	@Override
-	public void setFile(File file) {
+	public void setSource(File file) {
 		this.file = file;
 	}
 

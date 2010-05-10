@@ -4,12 +4,12 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-public class TailExecutor<T> {
-	public void execute(List<TailedFileReader<T>> tailedFiles,
+public class TailExecutor {
+	public <T, S> void execute(List<TailedReader<T, S>> tailedFiles,
 			TailPrinter<T> printer) {
 		ExecutorService executor = Executors.newFixedThreadPool(tailedFiles
 				.size() + 1);
-		for (TailedFileReader<T> tailedFile : tailedFiles) {
+		for (TailedReader<T, S> tailedFile : tailedFiles) {
 			executor.submit(tailedFile);
 		}
 		executor.submit(printer);

@@ -1,6 +1,5 @@
 package com.dpillay.tools.tail4j.core;
 
-import java.io.File;
 import java.util.concurrent.Callable;
 
 /**
@@ -9,22 +8,25 @@ import java.util.concurrent.Callable;
  * @author dpillay
  * 
  * @param <T>
+ *            Contents
+ * @param <S>
+ *            Source
  */
-public interface TailedFileReader<T> extends Callable<T> {
+public interface TailedReader<T, S> extends Callable<T> {
 
 	/**
 	 * Get the file being tailed
 	 * 
 	 * @return
 	 */
-	public File getFile();
+	public S getSource();
 
 	/**
 	 * Set the file to be tailed
 	 * 
 	 * @param file
 	 */
-	public void setFile(File file);
+	public void setSource(S source);
 
 	/**
 	 * Get the tailed listener

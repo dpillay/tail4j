@@ -10,22 +10,22 @@ import com.dpillay.tools.tail4j.core.PrintWriterTailPrinter;
 import com.dpillay.tools.tail4j.core.TailExecutor;
 import com.dpillay.tools.tail4j.core.TailListener;
 import com.dpillay.tools.tail4j.core.TailPrinter;
-import com.dpillay.tools.tail4j.core.TailedFileReader;
+import com.dpillay.tools.tail4j.core.TailedReader;
 
 public class TailLauncher {
 	public static void main(String[] args) {
 		TailConfiguration tc = TailLauncher.build(args);
-		List<TailedFileReader<String>> tailedFiles = new ArrayList<TailedFileReader<String>>();
+		List<TailedReader<String, File>> tailedFiles = new ArrayList<TailedReader<String, File>>();
 		TailListener<String> tailListener = new TailListener<String>();
 		for (String filePath : tc.getFiles()) {
 			File file = new File(filePath);
-			TailedFileReader<String> tailedFile = new StringTailedFileReader(
+			TailedReader<String, File> tailedFile = new StringTailedFileReader(
 					tc, file, tailListener);
 			tailedFiles.add(tailedFile);
 		}
 		TailPrinter<String> printer = new PrintWriterTailPrinter<String>(
 				System.out, tailListener);
-		TailExecutor<String> executor = new TailExecutor<String>();
+		TailExecutor executor = new TailExecutor();
 		executor.execute(tailedFiles, printer);
 	}
 	
