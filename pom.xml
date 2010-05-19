@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.dpillay.tools</groupId>
 	<artifactId>tail4j</artifactId>
-	<version>0.1</version>
+	<version>1.0.0.0</version>
 	<dependencies>
 		<dependency>
 			<groupId>junit</groupId>
@@ -22,6 +22,46 @@
 					<source>1.6</source>
 					<target>1.6</target>
 				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.bluestemsoftware.open.maven.plugin</groupId>
+				<artifactId>launch4j-plugin</artifactId>
+				<version>1.5.0.0</version>
+				<executions>
+					<execution>
+						<id>launch4j</id>
+						<phase>verify</phase>
+						<goals>
+							<goal>launch4j</goal>
+						</goals>
+						<configuration>
+							<dontWrapJar>false</dontWrapJar>
+							<headerType>console</headerType>
+							<outfile>target/${project.artifactId}.exe</outfile>
+							<jar>target/${project.artifactId}-${project.version}.jar</jar>
+							<errTitle>tail4j</errTitle>
+							<jre>
+								<minVersion>1.6.0</minVersion>
+							</jre>
+							<classPath>
+								<mainClass>com.dpillay.tools.tail4j.launcher.TailLauncher</mainClass>
+								<addDependencies>true</addDependencies>
+								<preCp>anything</preCp>
+							</classPath>
+							<versionInfo>
+								<fileVersion>${project.version}</fileVersion>
+								<txtFileVersion>${project.version}</txtFileVersion>
+								<fileDescription>tail4j - Simple tail for java</fileDescription>
+								<copyright>Copyright (c) 2010 Dinesh Pillay</copyright>
+								<productVersion>${project.version}</productVersion>
+								<txtProductVersion>${project.version}</txtProductVersion>
+								<productName>${project.artifactId}</productName>
+								<internalName>${project.groupId}.${project.artifactId}</internalName>
+								<originalFilename>${project.artifactId}.exe</originalFilename>
+							</versionInfo>
+						</configuration>
+					</execution>
+				</executions>
 			</plugin>
 		</plugins>
 	</build>

@@ -72,19 +72,27 @@ public class StringTailedFileReader implements TailedReader<String, File> {
 			BufferedReader br = new BufferedReader(new FileReader(file));
 			long showLineCount = this.configuration.getShowLines();
 			if (showLineCount > 0) {
-				long skipLinesLength = this.getSkipLinesLength(file,
-						showLineCount);
+				FileInfo fileInfo = this
+						.getSkipLinesLength(file, showLineCount);
+				long skipLinesLength = fileInfo.getFileSkipLength();
 				br.skip(skipLinesLength);
 			} else {
-				br.skip(file.length());
-			}
-			if (!this.configuration.isForce() && showLineCount <= 0) {
-				// showing 10 lines by default
-				showLineCount = 10;
+				if (this.configuration.isForce()) {
+					br.skip(file.length());
+				} else {
+					// showing 10 lines by default
+					showLineCount = 10;
+					FileInfo fileInfo = this.getSkipLinesLength(file,
+							showLineCount);
+					long skipLinesLength = fileInfo.getFileSkipLength();
+					br.skip(skipLinesLength);
+				}
 			}
 			while (this.configuration.isForce() || showLineCount-- > 0) {
 				String line = br.readLine();
 				if (line == null) {
+					if (!this.configuration.isForce())
+						break;
 					Thread.sleep(200);
 					continue;
 				}
@@ -99,13 +107,13 @@ public class StringTailedFileReader implements TailedReader<String, File> {
 		return null;
 	}
 
-	private long getSkipLinesLength(File file, long showLineCount) {
+	private FileInfo getSkipLinesLength(File file, long showLineCount) {
 		InputStream is = null;
+		long count = 0;
 		try {
 			is = new BufferedInputStream(new FileInputStream(file));
 			long[] lineChars = new long[(int) showLineCount + 1];
 			byte[] c = new byte[1024];
-			long count = 0;
 			int index = 0;
 			int readChars = 0;
 			long totalCharsRead = 0;
@@ -121,10 +129,32 @@ public class StringTailedFileReader implements TailedReader<String, File> {
 				totalCharsRead += readChars;
 			}
 			if (count >= showLineCount) {
-				return lineChars[index];
+				return new FileInfo(count,
+						(index == lineChars.length) ? lineChars[0]
+								: lineChars[index]);
 			}
 		} catch (Exception e) {
 		}
-		return 0;
+		return new FileInfo(count, 0);
+	}
+
+	private static class FileInfo {
+		long fileLineCount = 0;
+		long fileSkipLength = 0;
+
+		public FileInfo(long fileLineCount, long fileSkipLength) {
+			super();
+			this.fileLineCount = fileLineCount;
+			this.fileSkipLength = fileSkipLength;
+		}
+
+		@SuppressWarnings("unused")
+		public long getFileLineCount() {
+			return fileLineCount;
+		}
+
+		public long getFileSkipLength() {
+			return fileSkipLength;
+		}
 	}
 }
