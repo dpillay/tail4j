@@ -16,8 +16,8 @@ public class TailExecutor {
 			Future<T> future = executor.submit(tailedFile);
 			taskCheck.getFutures().add(future);
 		}
-		executor.submit(printer);
 		new Thread(taskCheck).start();
+		executor.submit(printer);
 	}
 
 	private static class TaskChecker<T> implements Runnable {
