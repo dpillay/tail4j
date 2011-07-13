@@ -20,6 +20,7 @@ import com.dpillay.tools.tail4j.model.TailEvent;
  * @author dpillay
  */
 public class StringTailedFileReader implements TailedReader<String, File> {
+	@SuppressWarnings("unused")
 	private static char newLine = System.getProperty("line.separator")
 			.charAt(0);
 
@@ -70,24 +71,11 @@ public class StringTailedFileReader implements TailedReader<String, File> {
 	public String call() throws Exception {
 		try {
 			BufferedReader br = new BufferedReader(new FileReader(file));
-			long showLineCount = this.configuration.getShowLines();
-			if (showLineCount > 0) {
-				FileInfo fileInfo = this
-						.getSkipLinesLength(file, showLineCount);
-				long skipLinesLength = fileInfo.getFileSkipLength();
-				br.skip(skipLinesLength);
-			} else {
-				if (this.configuration.isForce()) {
-					br.skip(file.length());
-				} else {
-					// showing 10 lines by default
-					showLineCount = 10;
-					FileInfo fileInfo = this.getSkipLinesLength(file,
-							showLineCount);
-					long skipLinesLength = fileInfo.getFileSkipLength();
-					br.skip(skipLinesLength);
-				}
-			}
+			long showLineCount = (this.configuration.getShowLines() >= 0) ? this.configuration
+					.getShowLines() : 10;
+			FileInfo fileInfo = this.getSkipLinesLength(file, showLineCount);
+			long skipLinesLength = fileInfo.getFileSkipLength();
+			br.skip(skipLinesLength);
 			while (this.configuration.isForce() || showLineCount-- > 0) {
 				String line = br.readLine();
 				if (line == null) {
@@ -96,8 +84,8 @@ public class StringTailedFileReader implements TailedReader<String, File> {
 					Thread.sleep(200);
 					continue;
 				}
-				TailEvent<String> event = TailEvent.generateEvent(line, line
-						.length());
+				TailEvent<String> event = TailEvent.generateEvent(line,
+						line.length());
 				this.listener.onTail(event);
 			}
 		} catch (Throwable t) {
@@ -119,7 +107,7 @@ public class StringTailedFileReader implements TailedReader<String, File> {
 			long totalCharsRead = 0;
 			while ((readChars = is.read(c)) != -1) {
 				for (int i = 0; i < readChars; ++i) {
-					if (c[i] == newLine) {
+					if (c[i] >= 0x0a && c[i] <= 0x0d) {
 						++count;
 						if (index == lineChars.length)
 							index = 0;

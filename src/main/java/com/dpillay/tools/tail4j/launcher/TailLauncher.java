@@ -40,8 +40,11 @@ public class TailLauncher {
 
 		// continue with tail
 		TailConfiguration tc = TailLauncher.build(args);
-		if (tc == null)
+		if (tc == null) {
+			usage();
 			return;
+		}
+
 		List<TailedReader<String, File>> tailedFiles = new ArrayList<TailedReader<String, File>>();
 		TailListener<String> tailListener = new TailListener<String>();
 		for (String filePath : tc.getFiles()) {

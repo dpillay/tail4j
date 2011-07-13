@@ -11,7 +11,7 @@ public class TailContents<T> {
 	public long getSize() {
 		return size;
 	}
-	
+
 	public TailContents(T contents, long size) {
 		super();
 		this.contents = contents;
@@ -28,7 +28,6 @@ public class TailContents<T> {
 		return result;
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -37,7 +36,7 @@ public class TailContents<T> {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		TailContents other = (TailContents) obj;
+		TailContents<?> other = TailContents.class.cast(obj);
 		if (contents == null) {
 			if (other.contents != null)
 				return false;

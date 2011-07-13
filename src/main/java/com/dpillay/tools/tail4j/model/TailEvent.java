@@ -21,7 +21,6 @@ public class TailEvent<T> {
 		return result;
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -30,7 +29,7 @@ public class TailEvent<T> {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		TailEvent other = (TailEvent) obj;
+		TailEvent<?> other = TailEvent.class.cast(obj);
 		if (tailContents == null) {
 			if (other.tailContents != null)
 				return false;
