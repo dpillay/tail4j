@@ -17,6 +17,7 @@ import com.dpillay.tools.tail4j.core.TailExecutor;
 import com.dpillay.tools.tail4j.core.TailListener;
 import com.dpillay.tools.tail4j.core.TailPrinter;
 import com.dpillay.tools.tail4j.core.TailedReader;
+import com.dpillay.tools.tail4j.readers.StringTailedFileReader;
 
 public class StringTailedFileReaderTest {
 

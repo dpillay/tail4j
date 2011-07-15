@@ -17,8 +17,7 @@ public class TailListener<T> {
 
 	public TailContents<T> poll() throws ApplicationException {
 		try {
-			TailEvent<T> te = null;
-			te = this.tailEventQueue.take();
+			TailEvent<T> te = this.tailEventQueue.take();
 			if (te != null)
 				return te.getTailContents();
 		} catch (InterruptedException e) {

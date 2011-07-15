@@ -1,16 +1,19 @@
 package com.dpillay.tools.tail4j.launcher;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.dpillay.tools.tail4j.characters.StringTailedFileReader;
 import com.dpillay.tools.tail4j.configuration.TailConfiguration;
 import com.dpillay.tools.tail4j.core.PrintWriterTailPrinter;
 import com.dpillay.tools.tail4j.core.TailExecutor;
 import com.dpillay.tools.tail4j.core.TailListener;
 import com.dpillay.tools.tail4j.core.TailPrinter;
 import com.dpillay.tools.tail4j.core.TailedReader;
+import com.dpillay.tools.tail4j.readers.InputStreamReader;
+import com.dpillay.tools.tail4j.readers.StringTailedFileReader;
 
 /**
  * Main class that launches the tailer.
@@ -19,7 +22,7 @@ import com.dpillay.tools.tail4j.core.TailedReader;
  * 
  */
 public class TailLauncher {
-	public static void main(String[] args) {
+	public static void main(String[] args) throws IOException {
 		// check if the arguments are sane
 		try {
 			argumentSanityChecker(args);
@@ -45,18 +48,32 @@ public class TailLauncher {
 			return;
 		}
 
-		List<TailedReader<String, File>> tailedFiles = new ArrayList<TailedReader<String, File>>();
-		TailListener<String> tailListener = new TailListener<String>();
-		for (String filePath : tc.getFiles()) {
-			File file = new File(filePath);
-			TailedReader<String, File> tailedFile = new StringTailedFileReader(
-					tc, file, tailListener);
+		if (tc.getFiles() != null && !tc.getFiles().isEmpty()) {
+			List<TailedReader<String, File>> tailedFiles = new ArrayList<TailedReader<String, File>>();
+			TailListener<String> tailListener = new TailListener<String>();
+			for (String filePath : tc.getFiles()) {
+				File file = new File(filePath);
+				TailedReader<String, File> tailedFile = new StringTailedFileReader(
+						tc, file, tailListener);
+				tailedFiles.add(tailedFile);
+			}
+			TailPrinter<String> printer = new PrintWriterTailPrinter<String>(
+					System.out, tailListener);
+			TailExecutor executor = new TailExecutor();
+			executor.execute(tailedFiles, printer);
+		} else if (System.in.available() > 0) {
+			List<TailedReader<String, InputStream>> tailedFiles = new ArrayList<TailedReader<String, InputStream>>();
+			TailListener<String> tailListener = new TailListener<String>();
+			TailedReader<String, InputStream> tailedFile = new InputStreamReader(
+					tc, System.in, tailListener);
 			tailedFiles.add(tailedFile);
+			TailPrinter<String> printer = new PrintWriterTailPrinter<String>(
+					System.out, tailListener);
+			TailExecutor executor = new TailExecutor();
+			executor.execute(tailedFiles, printer);
+		} else {
+			System.out.println("no system.in");
 		}
-		TailPrinter<String> printer = new PrintWriterTailPrinter<String>(
-				System.out, tailListener);
-		TailExecutor executor = new TailExecutor();
-		executor.execute(tailedFiles, printer);
 	}
 
 	private static boolean isUsage(String[] args) {
@@ -83,8 +100,8 @@ public class TailLauncher {
 		System.out.println("\t--help\t\tThis help section.");
 	}
 
-	private static void argumentSanityChecker(String[] args) {
-		if (args.length == 0)
+	private static void argumentSanityChecker(String[] args) throws IOException {
+		if (args.length == 0 && System.in.available() <= 0)
 			throw new RuntimeException();
 
 		for (int i = 0; i < args.length; ++i) {
