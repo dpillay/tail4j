@@ -7,12 +7,12 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 public class TailExecutor {
-	public <T, S> void execute(List<TailedReader<T, S>> tailedFiles,
+	public <T> void execute(List<TailedReader<T, ?>> tailedFiles,
 			TailPrinter<T> printer) {
 		ExecutorService executor = Executors.newFixedThreadPool(tailedFiles
 				.size() + 1);
 		TaskChecker<T> taskCheck = new TaskChecker<T>(executor);
-		for (TailedReader<T, S> tailedFile : tailedFiles) {
+		for (TailedReader<T, ?> tailedFile : tailedFiles) {
 			Future<T> future = executor.submit(tailedFile);
 			taskCheck.getFutures().add(future);
 		}

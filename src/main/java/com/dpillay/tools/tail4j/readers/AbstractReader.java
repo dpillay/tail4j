@@ -43,9 +43,9 @@ public class AbstractReader {
 						++count;
 						if (index == lineChars.length)
 							index = 0;
-						lineChars[index++] = totalCharsRead + i + 1;
-						i += ((c[i] != c[i + 1]) && (c[i + 1] >= 0x0a && c[i + 1] <= 0x0d)) ? 1
+						i += ((i + 1 < readChars) && (c[i] == 0x0d) && (c[i + 1] == 0x0a)) ? 1
 								: 0;
+						lineChars[index++] = totalCharsRead + i + 1;
 					}
 				}
 				totalCharsRead += readChars;

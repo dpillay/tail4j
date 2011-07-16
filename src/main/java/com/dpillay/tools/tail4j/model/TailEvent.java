@@ -43,8 +43,8 @@ public class TailEvent<T> {
 		return "TailEvent [tailContents=" + tailContents + "]";
 	}
 
-	public static <T> TailEvent<T> generateEvent(T line, long size) {
-		TailContents<T> tailContents = new TailContents<T>(line, size);
+	public static <T> TailEvent<T> generateEvent(T line, long size, boolean newLine) {
+		TailContents<T> tailContents = new TailContents<T>(line, size, newLine);
 		TailEvent<T> tailEvent = new TailEvent<T>(tailContents);
 		return tailEvent;
 	}

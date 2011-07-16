@@ -36,7 +36,10 @@ public class PrintWriterTailPrinter<T> implements TailPrinter<T> {
 
 	@Override
 	public void print(TailContents<T> tailContents) {
-		printer.println(tailContents.getContents());
+		if (tailContents.hasNewLine())
+			printer.print(tailContents.getContents());
+		else
+			printer.println(tailContents.getContents());
 	}
 
 	@Override

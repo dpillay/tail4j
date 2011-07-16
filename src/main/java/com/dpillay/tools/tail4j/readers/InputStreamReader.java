@@ -42,7 +42,7 @@ public class InputStreamReader extends AbstractReader implements
 				} else {
 					String line = new String(c, 0, readBytes);
 					TailEvent<String> event = TailEvent.generateEvent(line,
-							line.length());
+							line.length(), true);
 					this.listener.onTail(event);
 				}
 			}

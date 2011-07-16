@@ -66,7 +66,7 @@ public class StringTailedFileReader extends AbstractReader implements
 					continue;
 				}
 				TailEvent<String> event = TailEvent.generateEvent(line,
-						line.length());
+						line.length(), false);
 				this.listener.onTail(event);
 			}
 		} catch (Throwable t) {

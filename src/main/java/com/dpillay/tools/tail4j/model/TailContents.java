@@ -3,6 +3,15 @@ package com.dpillay.tools.tail4j.model;
 public class TailContents<T> {
 	private T contents = null;
 	private long size = 0;
+	private boolean newLine = false;
+
+	public boolean hasNewLine() {
+		return newLine;
+	}
+
+	public void setNewLine(boolean newLine) {
+		this.newLine = newLine;
+	}
 
 	public T getContents() {
 		return contents;
@@ -12,10 +21,11 @@ public class TailContents<T> {
 		return size;
 	}
 
-	public TailContents(T contents, long size) {
+	public TailContents(T contents, long size, boolean newLine) {
 		super();
 		this.contents = contents;
 		this.size = size;
+		this.newLine = newLine;
 	}
 
 	@Override

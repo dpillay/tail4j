@@ -33,7 +33,7 @@ public class StringTailedFileReaderTest {
 		TailListener<String> tailListener = EasyMock
 				.createMock(TailListener.class);
 
-		List<TailedReader<String, File>> tailedFiles = new ArrayList<TailedReader<String, File>>();
+		List<TailedReader<String, ?>> tailedFiles = new ArrayList<TailedReader<String, ?>>();
 		for (String filePath : tc.getFiles()) {
 			File file = null;
 			try {

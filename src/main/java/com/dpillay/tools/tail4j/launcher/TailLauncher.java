@@ -2,7 +2,6 @@ package com.dpillay.tools.tail4j.launcher;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,6 +11,7 @@ import com.dpillay.tools.tail4j.core.TailExecutor;
 import com.dpillay.tools.tail4j.core.TailListener;
 import com.dpillay.tools.tail4j.core.TailPrinter;
 import com.dpillay.tools.tail4j.core.TailedReader;
+import com.dpillay.tools.tail4j.model.TailContents;
 import com.dpillay.tools.tail4j.readers.InputStreamReader;
 import com.dpillay.tools.tail4j.readers.StringTailedFileReader;
 
@@ -48,32 +48,35 @@ public class TailLauncher {
 			return;
 		}
 
+		List<TailedReader<String, ?>> tailedFiles = new ArrayList<TailedReader<String, ?>>();
+		TailListener<String> tailListener = new TailListener<String>();
+		TailPrinter<String> printer = new PrintWriterTailPrinter<String>(
+				System.out, tailListener);
+
+		// tail specified files
 		if (tc.getFiles() != null && !tc.getFiles().isEmpty()) {
-			List<TailedReader<String, File>> tailedFiles = new ArrayList<TailedReader<String, File>>();
-			TailListener<String> tailListener = new TailListener<String>();
 			for (String filePath : tc.getFiles()) {
 				File file = new File(filePath);
-				TailedReader<String, File> tailedFile = new StringTailedFileReader(
+				TailedReader<String, ?> tailedFile = new StringTailedFileReader(
 						tc, file, tailListener);
 				tailedFiles.add(tailedFile);
 			}
-			TailPrinter<String> printer = new PrintWriterTailPrinter<String>(
-					System.out, tailListener);
-			TailExecutor executor = new TailExecutor();
-			executor.execute(tailedFiles, printer);
-		} else if (System.in.available() > 0) {
-			List<TailedReader<String, InputStream>> tailedFiles = new ArrayList<TailedReader<String, InputStream>>();
-			TailListener<String> tailListener = new TailListener<String>();
-			TailedReader<String, InputStream> tailedFile = new InputStreamReader(
-					tc, System.in, tailListener);
-			tailedFiles.add(tailedFile);
-			TailPrinter<String> printer = new PrintWriterTailPrinter<String>(
-					System.out, tailListener);
-			TailExecutor executor = new TailExecutor();
-			executor.execute(tailedFiles, printer);
-		} else {
-			System.out.println("no system.in");
 		}
+
+		// use System.in if available
+		if (System.in.available() > 0) {
+			if (tc.isForce()) {
+				String contents = "stdin cannot be force tailed";
+				printer.print(new TailContents<String>(contents, contents
+						.length(), false));
+			}
+			TailedReader<String, ?> tailedFile = new InputStreamReader(tc,
+					System.in, tailListener);
+			tailedFiles.add(tailedFile);
+		}
+
+		TailExecutor executor = new TailExecutor();
+		executor.execute(tailedFiles, printer);
 	}
 
 	private static boolean isUsage(String[] args) {
